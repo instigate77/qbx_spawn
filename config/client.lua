@@ -1,16 +1,19 @@
 return {
     spawns = {
         {
-            label = 'Legion Square',
-            coords = vec4(195.17, -933.77, 29.7, 144.5)
+            label = 'PillBox Medical Center',
+            coords = vector4(297.38, -586.10, 43.26, 112),
+
         },
         {
-            label = 'Paleto Bay',
-            coords = vec4(80.35, 6424.12, 31.67, 45.5),
+            label = 'Mission Row PD'
+            coords = vector4(428.08, -982.17, 30.71, 147),
         },
-        {
-            label = 'Motels',
-            coords = vec4(327.56, -205.08, 53.08, 163.5),
-        },
+--        {
+--            label = 'Dev Spawn'
+--            coords = vector4(-157.98, -990.99, 254.13, 340.87),
+--	    citizenid = { "LON96702", "UNO86933", "XIN83108", },
+--        },
+
     }
 }
