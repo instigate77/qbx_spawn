@@ -239,34 +239,34 @@ local function CheckAuth(spawnData, playerJob, playerGang,playerCID)
         -- Handle job being string or array
         if type(spawnData.job) == 'table' then
             for _, job in ipairs(spawnData.job) do
-                if job == playerJob.name then
+                if job == playerJob.jobname then
                     print(string.format("[qbspawn]: JOB: %s authorized for %s ",job, spawnData.label))
                     authorized = true
                     break
                 end
             end
         else
-            if spawnData.job == playerJob.name then
+            if spawnData.job == playerJob.jobname then
                 print(string.format("[qbspawn]: JOB: %s authorized for %s ",job, spawnData.label))
                 authorized = true
             end
         end
-    elseif spawnData.jobType then
+    -- elseif spawnData.jobType then
         -- Handle jobType being string or array
-        if type(spawnData.jobType) == 'table' then
-            for _, job in ipairs(spawnData.jobType) do
-                if job == playerJob.name then
-                    print(string.format("[qbspawn]: JOBTYPE: %s authorized for %s ",job, spawnData.label))
-                    authorized = true
-                    break
-                end
-            end
-        else
-            if spawnData.jobType == playerJob.type then
-                print(string.format("[qbspawn]: JOBTYPE: %s authorized for %s ",job, spawnData.label))
-                authorized = true
-            end
-        end
+    --     if type(spawnData.jobType) == 'table' then
+    --         for _, job in ipairs(spawnData.jobType) do
+    --             if job == playerJob.jobname then
+    --                 print(string.format("[qbspawn]: JOBTYPE: %s authorized for %s ",job, spawnData.label))
+    --                 authorized = true
+    --                 break
+    --             end
+    --         end
+    --     else
+    --         if spawnData.jobType == playerJob.type then
+    --             print(string.format("[qbspawn]: JOBTYPE: %s authorized for %s ",job, spawnData.label))
+    --             authorized = true
+    --         end
+    --     end
     elseif spawnData.gang then
         -- Handle gang being string or array
         if type(spawnData.gang) == 'table' then
@@ -294,7 +294,7 @@ local function CheckAuth(spawnData, playerJob, playerGang,playerCID)
                     break
                 end
             end
-      else
+       else
           if spawnData.citizenid == playerCID then
             print(string.format("[qbspawn]: CID: %s authorized for %s ",cid, spawnData.label))
             authorized = true
@@ -324,11 +324,10 @@ local function CheckAuth(spawnData, playerJob, playerGang,playerCID)
 
 
 -- INSTIGATE 05/19/24 ADDED citizenid as it is passed by qbx_core/client/character.lua when calligng this event
+-- citizenData seems to be the fill table of info
 --   If it goes missing, check for changes there
 AddEventHandler('qb-spawn:client:setupSpawns', function(citizenData)
     spawns = {}
-
-    print(dump(citizenData))
 
     spawns[#spawns+1] = {
         label = 'last_location',
@@ -336,13 +335,13 @@ AddEventHandler('qb-spawn:client:setupSpawns', function(citizenData)
     }
 
     -- INSTIGATE -- added check for config.spawns[i].
-    playerCID = citizenData.citizenID
-    playerJob = nil -- add job later.
-    playerGang = nil -- add gang later
+    local playerCID = citizenData.citizenid
+    local playerJob = citizenData.job
+    local playerGang = citizenData.gang
 
     for i = 1, #config.spawns do
 
-        if CheckAuth(config.spawns[i], playerJob, playerGang,playerCID) then
+        if CheckAuth(config.spawns[i], playerJob, playerGang, playerCID) then
             --add spawn to spawn list if it comes back authorized
             spawns[#spawns+1] = config.spawns[i]
         else
