@@ -228,7 +228,92 @@ local function inputHandler()
     stopCamera()
 end
 
-AddEventHandler('qb-spawn:client:setupSpawns', function()
+-- new function
+-- 2024-05-017 instigate 
+-- check for CID 
+-- Also need to add CID to config so we can check it (comes in as spaenData.citizenids
+--
+local function CheckAuth(spawnData, playerJob, playerGang,playerCID)
+    local authorized = false
+    if spawnData.job then
+        -- Handle job being string or array
+        if type(spawnData.job) == 'table' then
+            for _, job in ipairs(spawnData.job) do
+                if job == playerJob.name then
+                    print(string.format("[qbspawn]: JOB: %s authorized for %s ",job, spawnData.label))
+                    authorized = true
+                    break
+                end
+            end
+        else
+            if spawnData.job == playerJob.name then
+                print(string.format("[qbspawn]: JOB: %s authorized for %s ",job, spawnData.label))
+                authorized = true
+            end
+        end
+    elseif spawnData.jobType then
+        -- Handle jobType being string or array
+        if type(spawnData.jobType) == 'table' then
+            for _, job in ipairs(spawnData.jobType) do
+                if job == playerJob.name then
+                    print(string.format("[qbspawn]: JOBTYPE: %s authorized for %s ",job, spawnData.label))
+                    authorized = true
+                    break
+                end
+            end
+        else
+            if spawnData.jobType == playerJob.type then
+                print(string.format("[qbspawn]: JOBTYPE: %s authorized for %s ",job, spawnData.label))
+                authorized = true
+            end
+        end
+    elseif spawnData.gang then
+        -- Handle gang being string or array
+        if type(spawnData.gang) == 'table' then
+            for _, gang in ipairs(spawnData.gang) do
+                if gang == playerGang.name then
+                    print(string.format("[qbspawn]: GANG: %s authorized for %s ",gang, spawnData.label))
+                    authorized = true
+                    break
+                end
+            end
+        else
+            if spawnData.gang == playerGang.name then
+                print(string.format("[qbspawn]: GANG: %s authorized for %s ",gang, spawnData.label))
+                authorized = true
+            end
+        end
+    --instigate 2024-05-17 aded to check citizen
+    elseif spawnData.citizenid then
+        -- Handle citizenid being string or array
+        if type(spawnData.citizenid) == 'table' then
+            for _, cid in ipairs(spawnData.citizenid) do
+                if cid  == playerCID then
+                    print(string.format("[qbspawn]: CID: %s authorized for %s ",cid, spawnData.label))
+                    authorized = true
+                    break
+                end
+            end
+      else
+          if spawnData.citizenid == playerCID then
+            print(string.format("[qbspawn]: CID: %s authorized for %s ",cid, spawnData.label))
+            authorized = true
+          end
+      end
+    else
+        -- No restriction
+        authorized = true
+        print(string.format("[qbspawn]: No Restrictions for %s", spawnData.label))
+    end
+
+    return authorized
+  end
+
+
+
+-- INSTIGATE 05/19/24 ADDED citizenid as it is passed by qbx_core/client/character.lua when calligng this event
+--   If it goes missing, check for changes there
+AddEventHandler('qb-spawn:client:setupSpawns', function(citizenid)
     spawns = {}
 
     spawns[#spawns+1] = {
@@ -236,8 +321,19 @@ AddEventHandler('qb-spawn:client:setupSpawns', function()
         coords = lib.callback.await('qbx_spawn:server:getLastLocation')
     }
 
+    -- INSTIGATE -- added check for config.spawns[i].
+    playerCID = citizenid
+    playerJob = nil -- add job later.
+    playerGang = nil -- add gang later
+
     for i = 1, #config.spawns do
-        spawns[#spawns+1] = config.spawns[i]
+        if CheckAuth(config.spawns[i], playerJob, playerGang,playerCID) then
+            --add spawn to spawn list if it comes back authorized
+            spawns[#spawns+1] = config.spawns[i]
+        else
+            print (("Player %s not authorized for %s"):format(playerCID,config.spawns[i].label)
+        end
+
     end
 
     local houses = lib.callback.await('qbx_spawn:server:getHouses')
