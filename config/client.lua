@@ -6,14 +6,14 @@ return {
 
         },
         {
-            label = 'Mission Row PD'
+            label = 'Mission Row PD',
             coords = vector4(428.08, -982.17, 30.71, 147),
         },
---        {
---            label = 'Dev Spawn'
---            coords = vector4(-157.98, -990.99, 254.13, 340.87),
---	    citizenid = { "LON96702", "UNO86933", "XIN83108", },
---        },
+        {
+            label = 'Dev Spawn',
+            coords = vector4(-157.98, -990.99, 254.13, 340.87),
+    	    citizenid = { "LON96702", "UNO86933", "XIN83108", },
+        },
 
     }
 }
