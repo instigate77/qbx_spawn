@@ -309,12 +309,26 @@ local function CheckAuth(spawnData, playerJob, playerGang,playerCID)
     return authorized
   end
 
+  function dump(o)
+    if type(o) == 'table' then
+       local s = '{ '
+       for k,v in pairs(o) do
+          if type(k) ~= 'number' then k = '"'..k..'"' end
+          s = s .. '['..k..'] = ' .. dump(v) .. ','
+       end
+       return s .. '} '
+    else
+       return tostring(o)
+    end
+ end
 
 
 -- INSTIGATE 05/19/24 ADDED citizenid as it is passed by qbx_core/client/character.lua when calligng this event
 --   If it goes missing, check for changes there
-AddEventHandler('qb-spawn:client:setupSpawns', function(citizenid)
+AddEventHandler('qb-spawn:client:setupSpawns', function(citizenData)
     spawns = {}
+
+    print(dump(citizenData))
 
     spawns[#spawns+1] = {
         label = 'last_location',
@@ -322,7 +336,7 @@ AddEventHandler('qb-spawn:client:setupSpawns', function(citizenid)
     }
 
     -- INSTIGATE -- added check for config.spawns[i].
-    playerCID = citizenid
+    playerCID = citizenData.citizenID
     playerJob = nil -- add job later.
     playerGang = nil -- add gang later
 
