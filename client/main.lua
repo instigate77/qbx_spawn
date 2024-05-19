@@ -327,11 +327,12 @@ AddEventHandler('qb-spawn:client:setupSpawns', function(citizenid)
     playerGang = nil -- add gang later
 
     for i = 1, #config.spawns do
+
         if CheckAuth(config.spawns[i], playerJob, playerGang,playerCID) then
             --add spawn to spawn list if it comes back authorized
             spawns[#spawns+1] = config.spawns[i]
         else
-            print (("Player %s not authorized for %s"):format(playerCID,config.spawns[i].label)
+            print (("Player %s not authorized for %s"):format(playerCID,config.spawns[i].label))
         end
 
     end
